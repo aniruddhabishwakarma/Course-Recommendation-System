@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: #F9FAFB;
+        }
+        /* Modal Transition */
+        .modal-enter {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        .modal-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .modal-leave {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .modal-leave-active {
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+
+    <!-- Login Form Container -->
+    <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
+        <!-- Heading with Dark Slate Blue -->
+        <h2 class="text-3xl font-bold text-center text-[#3B3F58] mb-6">Login</h2>
+
+        <!-- Display Error Messages -->
+        {% if form.errors %}
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <ul>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <!-- Email Field with Soft Gray Background -->
+            <div class="mb-4">
+                <label for="email" class="block text-gray-700 font-medium mb-2">Username</label>
+                <input type="text" name="username" id="email" placeholder="Enter your email" 
+                    class="w-full p-3 border border-gray-300 rounded-md bg-[#F0F2F5] focus:outline-none focus:ring-2 focus:ring-[#3B3F58] transition duration-200">
+            </div>
+            
+            <!-- Password Field with Soft Gray Background -->
+            <div class="mb-6">
+                <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
+                <input type="password" name="password" id="password" placeholder="Enter your password" 
+                    class="w-full p-3 border border-gray-300 rounded-md bg-[#F0F2F5] focus:outline-none focus:ring-2 focus:ring-[#3B3F58] transition duration-200">
+            </div>
+
+            <!-- Login Button with Blue Color -->
+            <button type="submit" 
+                class="w-full py-3 rounded-md bg-[#3B82F6] hover:bg-[#2563EB] text-white font-semibold transition duration-300 shadow-md">
+                Login
+            </button>
+
+            <!-- Forgot Password Link -->
+            <p class="text-center mt-4 text-gray-600">
+                <a href="#" class="text-[#3B3F58] hover:text-gray-500 transition duration-200">Forgot Password?</a>
+            </p>
+        </form>
+
+        <!-- Register Link (Modal Trigger) -->
+        <p class="text-center mt-4 text-gray-600">
+            Don't have an account? 
+            <button class="text-[#3B82F6] hover:text-[#2563EB] transition duration-200 font-semibold" onclick="toggleModal()">Register</button>
+        </p>
+    </div>
+
+   <!-- Register Modal -->
+<div id="registerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white w-full max-w-md p-8 rounded-lg shadow-2xl">
+        <h2 class="text-3xl font-bold text-center mb-6 text-[#3B3F58]">Register</h2>
+        <form method="post" action="{% url 'register' %}">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Username" class="w-full mb-4 p-3 rounded-md border border-gray-300 bg-[#F0F2F5]" required>
+            <input type="text" name="full_name" placeholder="Full Name" class="w-full mb-4 p-3 rounded-md border border-gray-300 bg-[#F0F2F5]" required>
+            <input type="text" name="contact_number" placeholder="Contact Number" class="w-full mb-4 p-3 rounded-md border border-gray-300 bg-[#F0F2F5]" required>
+            <input type="email" name="email" placeholder="Email" class="w-full mb-4 p-3 rounded-md border border-gray-300 bg-[#F0F2F5]" required>
+            <input type="password" name="password1" placeholder="Password" class="w-full mb-4 p-3 rounded-md border border-gray-300 bg-[#F0F2F5]" required>
+            <input type="password" name="password2" placeholder="Confirm Password" class="w-full mb-4 p-3 rounded-md border border-gray-300 bg-[#F0F2F5]" required>
+            <button type="submit" class="w-full py-3 rounded-md bg-[#3B82F6] hover:bg-[#2563EB] text-white font-semibold transition duration-300 shadow-md">Register</button>
+        </form>
+        <button class="mt-4 text-[#3B82F6] font-semibold hover:underline w-full text-center" onclick="toggleModal()">Cancel</button>
+    </div>
+</div>
+
+
+    <!-- JavaScript for Modal Toggle -->
+    <script>
+        function toggleModal() {
+            const modal = document.getElementById("registerModal");
+            modal.classList.toggle("hidden");
+        }
+    </script>
+</body>
+</html>
