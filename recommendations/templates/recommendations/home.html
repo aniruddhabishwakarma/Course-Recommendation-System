@@ -81,62 +81,67 @@
                 <div class="swiper-button-prev"></div>
             </div>
         </div>
-     <!-- User-Based Recommendations Section (Only for Logged-In Users) -->
-{% if user.is_authenticated and recommended_courses and recommended_courses.count > 0 %}
-<section class="mt-12">
-    <h2 class="text-2xl font-bold text-[#3B3F58] mb-4">Recommended for You</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {% for course in recommended_courses %}
-        <div class="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition duration-300">
-            <img src="{{ course.thumbnail }}" alt="{{ course.title }}" class="w-full h-48 object-cover">
-            <div class="p-4">
-                <h3 class="text-xl font-semibold text-[#3B3F58] mb-2">{{ course.title }}</h3>
-                <p class="text-gray-600 mb-2">Rating: ⭐ {{ course.rating }}</p>
-                <p class="text-gray-600 mb-2">Price: {{ course.price }}</p>
-                <a href="{% url 'course_detail' course.id %}" class="text-[#3B82F6] hover:text-[#2563EB] transition duration-200">View Course</a>
-            </div>
-        </div>
-        {% empty %}
-        <p class="text-gray-600">No recommendations at the moment.</p>
-        {% endfor %}
-    </div>
-</section>
-{% endif %}
-
+        {% if user.is_authenticated and recommended_courses %}
         <section class="mt-12">
-            <h2 class="text-2xl font-bold text-[#3B3F58] mb-4">Trending Searches</h2>
-            <div class="space-y-8">
-                {% for trend in trending_data %}
-                <div class="bg-white p-4 rounded-lg shadow-lg">
-                    <h3 class="text-xl font-semibold text-[#3B3F58] mb-2">
-                        <a href="{% url 'search' %}?q={{ trend.keyword }}"
-                            class="text-[#3B82F6] hover:text-[#2563EB] transition duration-200">
-                            {{ trend.keyword }}
-                        </a>
-                    </h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {% for course in trend.courses %}
-                        <div
-                            class="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition duration-300">
-                            <img src="{{ course.thumbnail }}" alt="{{ course.title }}" class="w-full h-48 object-cover">
-                            <div class="p-4">
-                                <h4 class="text-lg font-semibold text-[#3B3F58] mb-2">{{ course.title }}</h4>
-                                <p class="text-gray-600 mb-2">Rating: ⭐ {{ course.rating }}</p>
-                                <p class="text-gray-600 mb-2">Price: {{ course.price }}</p>
-                                <a href="{% url 'course_detail' course.id %}"
-                                    class="text-[#3B82F6] hover:text-[#2563EB] transition duration-200">View Course</a>
-                            </div>
-                        </div>
-                        {% empty %}
-                        <p class="text-gray-600">No related courses found.</p>
-                        {% endfor %}
+            <h2 class="text-2xl font-bold text-[#3B3F58] mb-4">Recommended for You</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for course in recommended_courses %}
+                <div class="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition duration-300">
+                    <img src="{{ course.thumbnail }}" alt="{{ course.title }}" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold text-[#3B3F58] mb-2">{{ course.title }}</h3>
+                        <p class="text-gray-600 mb-2">Rating: ⭐ {{ course.rating }}</p>
+                        <p class="text-gray-600 mb-2">Price: {{ course.price }}</p>
+                        <a href="{% url 'course_detail' course.id %}" class="text-[#3B82F6] hover:text-[#2563EB] transition duration-200">View Course</a>
                     </div>
                 </div>
-                {% empty %}
-                <p class="text-gray-600">No trending searches yet.</p>
                 {% endfor %}
             </div>
         </section>
+        {% endif %}
+
+<!-- Trending Searches Section -->
+<section class="mt-12">
+    <h2 class="text-2xl font-bold text-[#3B3F58] mb-4">
+        Trending Searches 
+        <span class="text-gray-500 text-lg">
+            (
+            {% for trend in trending_data %}
+                <a href="{% url 'search' %}?q={{ trend.keyword }}" class="hover:text-[#2563EB] transition duration-200">
+                    {{ trend.keyword }}
+                </a>
+                {% if not forloop.last %}, {% endif %}
+            {% endfor %}
+            )
+        </span>
+    </h2>
+    <div class="bg-white p-4 rounded-lg shadow-lg">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for trend in trending_data %}
+                {% for course in trend.courses %}
+                <div class="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition duration-300">
+                    <img src="{{ course.thumbnail }}" alt="{{ course.title }}" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h4 class="text-lg font-semibold text-[#3B3F58] mb-2">
+                            <a href="{% url 'search' %}?q={{ trend.keyword }}"
+                                class="text-[#3B82F6] hover:text-[#2563EB] transition duration-200">
+                                {{ course.title }}
+                            </a>
+                        </h4>
+                        <p class="text-gray-600 mb-2">Rating: ⭐ {{ course.rating }}</p>
+                        <p class="text-gray-600 mb-2">Price: {{ course.price }}</p>
+                        <a href="{% url 'course_detail' course.id %}"
+                            class="text-[#3B82F6] hover:text-[#2563EB] transition duration-200">View Course</a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+
 
     </main>
 

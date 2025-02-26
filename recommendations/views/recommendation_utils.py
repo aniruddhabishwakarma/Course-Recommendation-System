@@ -35,55 +35,63 @@ def get_similar_courses(course):
 
     return similar_courses
 
-def get_trending_searches_with_courses():
-    """
-    Get the top 5 trending searches with 5 courses related to each keyword.
-    """
-    # ✅ Get Top 5 Trending Searches
-    trending_keywords = (
+def get_trending_searches_with_courses(keyword_limit=2, course_limit=3):
+    # ✅ Get the Top `keyword_limit` Trending Searches
+    trending_searches = (
         SearchQuery.objects.values('keyword')
         .annotate(keyword_count=Count('keyword'))
-        .order_by('-keyword_count')[:5]
+        .order_by('-keyword_count')[:keyword_limit]
     )
 
     trending_data = []
 
-    for trend in trending_keywords:
+    for trend in trending_searches:
         keyword = trend['keyword']
-
-        # ✅ Get 5 Courses Related to the Keyword
+        
+        # ✅ Fetch Courses Related to the Keyword
         related_courses = Course.objects.filter(
             Q(title__icontains=keyword) | Q(description__icontains=keyword)
-        ).order_by('-rating')[:5]
+        ).order_by('-rating')[:course_limit]  # ✅ Get Top `course_limit` Courses by Rating
 
+        # ✅ Limit the Number of Courses to Display for Each Keyword
+        limited_courses = related_courses[:course_limit]
+        
+        # ✅ Append Keyword and Its Limited Courses to the Data
         trending_data.append({
             'keyword': keyword,
-            'courses': related_courses
+            'courses': limited_courses
         })
-    
+        
+        # ✅ Debugging Output
+        print(f"Keyword: {keyword} -> Courses: {[course.title for course in limited_courses]}")
+
     return trending_data
 
-def get_user_based_recommendations(user, num_recommendations=5):
-    """
-    Get course recommendations based on other users' viewing patterns.
-    """
-    # ✅ Get all courses the current user has viewed
-    viewed_courses = CourseView.objects.filter(user=user).values_list('course_id', flat=True)
 
-    # ✅ Find users who viewed the same courses
-    similar_users = CourseView.objects.filter(course_id__in=viewed_courses).exclude(user=user).values('user').distinct()
-
-    # ✅ Get courses viewed by these similar users but not by the current user
-    recommended_courses = (
-        CourseView.objects.filter(user__in=similar_users)
-        .exclude(course_id__in=viewed_courses)
-        .values('course')
-        .annotate(view_count=Count('course'))
-        .order_by('-view_count')[:num_recommendations]
+def get_user_based_recommendations(user, num_recommendations=6):
+    """
+    Get user-based recommendations by finding the most viewed course by the user,
+    and fetching similar courses using get_similar_courses.
+    """
+    # ✅ Step 1: Identify Courses Viewed by the User
+    viewed_courses = (
+        CourseView.objects
+        .filter(user=user)
+        .values('course_id')
+        .annotate(view_count=Count('course_id'))
+        .order_by('-view_count')
     )
 
-    # ✅ Fetch the Course objects for the recommended course IDs
-    recommended_course_ids = [item['course'] for item in recommended_courses]
-    recommended_courses = Course.objects.filter(id__in=recommended_course_ids)
+    # ✅ Step 2: Find the Most Repeated Course ID
+    if viewed_courses.exists():
+        most_viewed_course_id = viewed_courses.first()['course_id']
+        print(f"Most Viewed Course ID: {most_viewed_course_id}")  # ✅ Debugging
+
+        # ✅ Step 3: Get Similar Courses
+        most_viewed_course = Course.objects.get(id=most_viewed_course_id)
+        recommended_courses = get_similar_courses(most_viewed_course)[:num_recommendations]
+        print(f"Recommended Courses: {recommended_courses}")  # ✅ Debugging
+    else:
+        recommended_courses = None  # ✅ No recommendations if no history
 
     return recommended_courses

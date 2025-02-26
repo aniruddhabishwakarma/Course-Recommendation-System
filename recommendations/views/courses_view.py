@@ -24,15 +24,16 @@ def home_view(request):
     else:
         recommended_courses = None  # ✅ No recommendations for anonymous users
 
+
     # ✅ Get Trending Searches with Courses for Display
     trending_data = get_trending_searches_with_courses()
     print(f"Trending Data: {trending_data}")  # ✅ Debugging
 
     return render(request, 'recommendations/home.html', {
-        'courses': courses,
-        'trending_data': trending_data,  # ✅ Pass Trending Data to Template
-        'recommended_courses': recommended_courses  # ✅ Pass Recommendations to Template
-    })
+    'courses': courses,
+    'trending_data': trending_data,  # ✅ Pass Trending Data to Template
+    'recommended_courses': recommended_courses  # ✅ Pass Recommendations to Template
+})
 
 
 # ✅ Search View
