@@ -31,7 +31,9 @@
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen">
+<body>
+    <div class="flex items-center justify-center min-h-screen">
+    {% include 'pages/Navbar.html' %}
 
     <!-- Login Form Container -->
     <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
@@ -115,5 +117,9 @@
             modal.classList.toggle("hidden");
         }
     </script>
+    
+    </div>
+    {% include 'pages/Footer.html' %}
 </body>
+
 </html>

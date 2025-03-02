@@ -1,0 +1,36 @@
+<nav class="bg-white shadow-md fixed w-full z-10 top-0">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16 items-center">
+      <div class="flex-shrink-0 flex items-center">
+        <a href="{% url 'home' %}" class="text-2xl font-bold text-[#3B3F58]">Course Recommendations System</a>
+      </div>
+      <div class="flex-grow flex items-center justify-center relative max-w-sm">
+        <form action="{% url 'search' %}" method="get" class="w-full">
+          <div class="relative">
+            <input type="text" name="q" placeholder="Search..." class="w-full p-2 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3B82F6] transition duration-200"/>
+            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1011 3.5a7.5 7.5 0 005.65 13.15z" />
+            </svg>
+          </div>
+        </form>
+      </div>
+      <div class="hidden sm:ml-6 sm:flex sm:space-x-4 items-center relative">
+        {% if user.is_authenticated %}
+        <div class="relative group">
+          <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center cursor-pointer overflow-hidden">
+            <img src="{{ user.profile_picture.url }}" alt="User Photo" class="w-full h-full object-cover"/>
+          </div>
+          <div class="absolute right-0 mt-2 w-48 bg-white shadow-md rounded-md hidden group-hover:block">
+            <a href="{% url 'register' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a>
+            <a href="{% url 'register' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Settings</a>
+            <a href="{% url 'logout' %}" class="block px-4 py-2 text-red-600 hover:bg-gray-100">Logout</a>
+          </div>
+        </div>
+        {% else %}
+        <a href="{% url 'login' %}" class="px-4 py-2 border border-[#3B82F6] text-[#3B82F6] rounded-md hover:bg-[#3B82F6] hover:text-white transition duration-200">Login</a>
+        <a href="{% url 'register' %}" class="px-4 py-2 bg-[#3B82F6] text-white rounded-md hover:bg-[#2563EB] transition duration-200">Signup</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
