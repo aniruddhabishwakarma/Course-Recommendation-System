@@ -5,7 +5,10 @@ from django.db.models import Q, Count
 import nltk
 from nltk.stem import WordNetLemmatizer
 from django.core.paginator import Paginator
-from .recommendation_utils import get_similar_courses, get_trending_searches_with_courses, get_user_based_recommendations
+from .recommendation_utils import get_similar_courses, get_trending_searches_with_courses, get_user_based_recommendations, extract_keyword
+
+nltk.download('stopwords')
+nltk.download('punkt')
 
 # ✅ Home View
 def home_view(request):
@@ -79,32 +82,38 @@ def search_view(request):
 
 # ✅ Course Detail View
 def course_detail_view(request, course_id):
-    # Get the course by ID or return 404 if not found
+    """
+    Handles course details, tracks user views, and retrieves similar courses.
+    """
+    # ✅ Get the course by ID or return 404 if not found
     course = get_object_or_404(Course, id=course_id)
 
-    # Get the instructor details (ForeignKey relation)
+    # ✅ Extract Keyword from Course Title
+    keyword = extract_keyword(course.title)
+
+    # ✅ Get the instructor details (ForeignKey relation)
     instructor = course.instructor
 
     # ✅ Track Course View for Logged-In Users
     if request.user.is_authenticated:
-        # Check if this course has already been viewed by this user
+        # ✅ Check if the course has already been viewed by the user
         view_exists = CourseView.objects.filter(user=request.user, course=course).exists()
         if not view_exists:
-            # If not, create a new CourseView entry
-            CourseView.objects.create(user=request.user, course=course)
+            # ✅ Store the course view along with the extracted keyword
+            CourseView.objects.create(user=request.user, course=course, keyword=keyword)
+            print(f"Stored Course View: {course.title} -> Keyword: {keyword}")  # ✅ Debugging
 
-        # ✅ Get Similar Courses using the New Function
+        # ✅ Get Similar Courses using the function
         similar_courses = get_similar_courses(course)
-        print(f"Similar Courses: {similar_courses}")  # ✅ Debugging
+        print(f"Similar Courses: {[c.title for c in similar_courses]}")  # ✅ Debugging
     else:
-        similar_courses = None  # ✅ None for Unauthenticated Users
+        similar_courses = None  # ✅ No similar courses for unauthenticated users
 
     return render(request, 'recommendations/course_detail.html', {
         'course': course,
         'instructor': instructor,
         'similar_courses': similar_courses  # ✅ Pass Similar Courses to Template
     })
-
 
 # ✅ Instructor's Courses View
 def instructor_courses_view(request, instructor_id):
