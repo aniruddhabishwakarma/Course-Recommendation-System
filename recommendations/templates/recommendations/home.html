@@ -22,53 +22,49 @@
 
    {% include 'pages/Navbar.html' %}
 
-    <!-- Main Content -->
-    <main class="flex-grow pt-20 px-4">
-        <div class="max-w-7xl mx-auto">
-            <h2 class="text-3xl font-bold text-[#3B3F58] mb-6">Featured Courses</h2>
-            <!-- Swiper Slider Container -->
-            <div class="swiper-container">
-                <div class="swiper-wrapper">
-                    {% for course in courses %}
-                    <div class="swiper-slide">
-                        <a href="{% url 'course_detail' course.id %}">
-                        <div
-                            class="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition duration-300">
-                            <img src="{{ course.thumbnail }}" alt="{{ course.title }}" class="w-full h-48 object-cover">
-                            <div class="p-4">
-                                <h3 class="text-xl font-semibold text-[#3B3F58] mb-2">{{ course.title }}</h3>
-                                <p class="text-gray-600 mb-2">Rating: ⭐ {{ course.rating }}</p>
-                                <p class="text-gray-600 mb-2">Price: {{ course.price }}</p>
-                            </div>
-                        </div>
-                        </a>
-                    </div>
-                    {% endfor %}
-                </div>
-
-                <!-- Swiper Navigation Buttons -->
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
-            </div>
-        </div>
+<!-- Main Content -->
+<main class="flex-grow pt-20 px-4">
+    <div class="max-w-7xl mx-auto">
+    
         {% if user.is_authenticated and recommended_courses %}
-        <section class="mt-12">
-            <h2 class="text-2xl font-bold text-[#3B3F58] mb-4">Recommended for You</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {% for course in recommended_courses %}
-                <div class="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition duration-300">
+        <!-- ✅ Show Recommendations if Available -->
+        <h2 class="text-3xl font-bold text-[#3B3F58] mb-6">Recommended for You</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for course in recommended_courses %}
+            <div class="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition duration-300">
+                <a href="{% url 'course_detail' course.id %}">
                     <img src="{{ course.thumbnail }}" alt="{{ course.title }}" class="w-full h-48 object-cover">
                     <div class="p-4">
                         <h3 class="text-xl font-semibold text-[#3B3F58] mb-2">{{ course.title }}</h3>
                         <p class="text-gray-600 mb-2">Rating: ⭐ {{ course.rating }}</p>
                         <p class="text-gray-600 mb-2">Price: {{ course.price }}</p>
-                        <a href="{% url 'course_detail' course.id %}" class="text-[#3B82F6] hover:text-[#2563EB] transition duration-200">View Course</a>
                     </div>
-                </div>
-                {% endfor %}
+                </a>
             </div>
-        </section>
+            {% endfor %}
+        </div>
+
+        {% else %}
+        <!-- ✅ Show Featured Courses if No Recommendations -->
+        <h2 class="text-3xl font-bold text-[#3B3F58] mb-6">Featured Courses</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for course in courses %}
+            <div class="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition duration-300">
+                <a href="{% url 'course_detail' course.id %}">
+                    <img src="{{ course.thumbnail }}" alt="{{ course.title }}" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold text-[#3B3F58] mb-2">{{ course.title }}</h3>
+                        <p class="text-gray-600 mb-2">Rating: ⭐ {{ course.rating }}</p>
+                        <p class="text-gray-600 mb-2">Price: {{ course.price }}</p>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
         {% endif %}
+
+    </div>
+</main>
 
 <!-- Trending Searches Section -->
 <section class="mt-12">

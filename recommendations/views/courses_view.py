@@ -12,7 +12,7 @@ def home_view(request):
     # Get all course IDs
     course_ids = Course.objects.values_list('id', flat=True)
     # Select 15 random IDs
-    random_ids = random.sample(list(course_ids), min(len(course_ids), 15))
+    random_ids = random.sample(list(course_ids), min(len(course_ids), 10))
     # Query the courses based on the random IDs
     courses = Course.objects.filter(id__in=random_ids)
 

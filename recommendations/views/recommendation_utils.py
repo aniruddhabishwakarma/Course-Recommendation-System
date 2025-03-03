@@ -2,6 +2,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from ..models import Course, SearchQuery, CourseView, Course
 from django.db.models import Count, Q
+import random
 
 def get_similar_courses(course):
     """
@@ -68,30 +69,40 @@ def get_trending_searches_with_courses(keyword_limit=2, course_limit=3):
     return trending_data
 
 
-def get_user_based_recommendations(user, num_recommendations=6):
+def get_user_based_recommendations(user, num_recommendations=15):
     """
-    Get user-based recommendations by finding the most viewed course by the user,
-    and fetching similar courses using get_similar_courses.
+    Get course recommendations based on the user's most frequently searched keywords.
     """
-    # ✅ Step 1: Identify Courses Viewed by the User
-    viewed_courses = (
-        CourseView.objects
-        .filter(user=user)
-        .values('course_id')
-        .annotate(view_count=Count('course_id'))
-        .order_by('-view_count')
+    # ✅ Step 1: Get User’s Most Searched Keywords
+    user_searches = (
+        SearchQuery.objects.filter(user=user)
+        .values('keyword')
+        .annotate(search_count=Count('keyword'))
+        .order_by('-search_count')
     )
 
-    # ✅ Step 2: Find the Most Repeated Course ID
-    if viewed_courses.exists():
-        most_viewed_course_id = viewed_courses.first()['course_id']
-        print(f"Most Viewed Course ID: {most_viewed_course_id}")  # ✅ Debugging
+    # ✅ Step 2: If No Search History, Return None
+    if not user_searches.exists():
+        return None  # ✅ No Recommendations if No Search History
 
-        # ✅ Step 3: Get Similar Courses
-        most_viewed_course = Course.objects.get(id=most_viewed_course_id)
-        recommended_courses = get_similar_courses(most_viewed_course)[:num_recommendations]
-        print(f"Recommended Courses: {recommended_courses}")  # ✅ Debugging
-    else:
-        recommended_courses = None  # ✅ No recommendations if no history
+    # ✅ Step 3: Select the Top 1-3 Most Searched Keywords
+    top_keywords = [entry['keyword'] for entry in user_searches[:3]]
+
+    # ✅ Step 4: Build a Query for All Top Keywords
+    keyword_query = Q()
+    for keyword in top_keywords:
+        keyword_query |= Q(title__icontains=keyword) | Q(description__icontains=keyword)
+
+    # ✅ Step 5: Get Courses Related to These Keywords
+    all_recommended_courses = list(Course.objects.filter(keyword_query))  # Convert to List
+
+    # ✅ Step 6: Shuffle the Courses Randomly
+    random.shuffle(all_recommended_courses)
+
+    # ✅ Step 7: Return Only `num_recommendations` Courses
+    recommended_courses = all_recommended_courses[:num_recommendations]
+
+    print(f"User's Most Searched Keywords: {top_keywords}")  # ✅ Debugging
+    print(f"Recommended Courses (Randomized): {[course.title for course in recommended_courses]}")  # ✅ Debugging
 
     return recommended_courses
