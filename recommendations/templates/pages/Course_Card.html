@@ -1,0 +1,148 @@
+<!-- course_card.html -->
+<style> 
+    body {
+        background: #F9FAFB;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .course-card {
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        overflow: hidden;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background: white;
+        max-width: 280px;
+        margin: 0 auto;
+    }
+
+    .course-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .course-image {
+        position: relative;
+        overflow: hidden;
+        height: 140px;
+    }
+
+    .course-image img {
+        transition: transform 0.5s ease;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .course-card:hover .course-image img {
+        transform: scale(1.05);
+    }
+
+    .price-tag {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: rgba(59, 63, 88, 0.9);
+        color: white;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 12px;
+        backdrop-filter: blur(4px);
+    }
+
+    .course-level {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #3B3F58;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: 10px;
+        backdrop-filter: blur(4px);
+    }
+
+    .rating-stars {
+        color: #FBBF24;
+    }
+
+    /* Fix for swiper container width */
+    .swiper-container {
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+    }
+
+    /* Improved navigation buttons */
+    .swiper-button-next, .swiper-button-prev {
+        color: #3B3F58;
+        background: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        opacity: 0.9;
+        transition: all 0.2s ease;
+    }
+
+    .swiper-button-next:hover, .swiper-button-prev:hover {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+
+    .swiper-button-next:after, .swiper-button-prev:after {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    /* Make sure buttons are visible */
+    .swiper-button-next {
+        right: 10px;
+    }
+
+    .swiper-button-prev {
+        left: 10px;
+    }
+</style>
+
+<a href="{% url 'course_detail' course.id %}" class="block h-full">
+    <div class="course-card shadow-md">
+        <div class="course-image">
+            <img src="{{ course.thumbnail }}" alt="{{ course.title }}">
+            <div class="price-tag">{{ course.price }}</div>
+            <div class="course-level">Beginner</div>
+        </div>
+        <div class="p-3 flex-grow flex flex-col">
+            <div class="flex items-center mb-1">
+                <div class="rating-stars flex items-center">
+                    <span class="mr-1 text-xs">{{ course.rating }}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                </div>
+                <span class="text-gray-500 text-xs ml-1">({{ course.reviews_count|default:"0" }})</span>
+            </div>
+            <h3 class="text-sm font-semibold text-[#3B3F58] mb-1 line-clamp-2 h-10">{{ course.title }}</h3>
+            <div class="flex items-center mt-auto pt-2 border-t border-gray-100">
+                <span class="text-gray-600 text-xs truncate">{{ course.instructor.name|default:"Instructor" }}</span>
+            </div>
+        </div>
+        <div class="bg-[#F3F4F6] px-3 py-2 flex justify-between items-center text-xs">
+            <div class="flex items-center text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {{ course.duration|default:"10h" }}
+            </div>
+            <div class="flex items-center text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+                {{ course.lessons_count|default:"24" }}
+            </div>
+        </div>
+    </div>
+</a>

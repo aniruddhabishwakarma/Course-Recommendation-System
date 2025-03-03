@@ -11,67 +11,27 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
     <!-- Swiper.js JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
-    <style>
-        body {
-            background: #F9FAFB;
-        }
-    </style>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body class="min-h-screen flex flex-col">
 
-    <!-- Navbar -->
-    <nav class="bg-white shadow-md fixed w-full z-10 top-0">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <!-- Logo -->
-                <div class="flex-shrink-0 flex items-center">
-                    <a href="{% url 'home' %}" class="text-2xl font-bold text-[#3B3F58]">MySite</a>
-                </div>
-                <!-- Search Bar -->
-                <div class="flex-grow flex items-center justify-center">
-                    <form action="{% url 'search' %}" method="get" class="w-full max-w-sm">
-                        <input type="text" name="q" placeholder="Search..."
-                            class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3B82F6] transition duration-200">
-                    </form>
-                </div>
-                <!-- Navigation Links -->
-                <div class="hidden sm:ml-6 sm:flex sm:space-x-4 items-center">
-                    <a href="{% url 'home' %}"
-                        class="text-gray-600 hover:text-[#3B3F58] transition duration-200">Home</a>
-                    {% if user.is_authenticated %}
-                    <span class="text-gray-600">Hello, {{ user.username }}</span>
-                    <a href="{% url 'logout' %}"
-                        class="text-[#3B82F6] hover:text-[#2563EB] transition duration-200">Logout</a>
-                    {% else %}
-                    <a href="{% url 'login' %}"
-                        class="text-[#3B82F6] hover:text-[#2563EB] transition duration-200">Login</a>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </nav>
+   {% include 'pages/Navbar.html' %}
 
     <!-- Main Content -->
-    <main class="flex-grow pt-20 px-4">
+    <main class="flex-grow pt-16 px-10 mt-10">
         <div class="max-w-7xl mx-auto">
-            <h2 class="text-3xl font-bold text-[#3B3F58] mb-6">Featured Courses</h2>
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-[#3B3F58] mt-1">Featured Courses</h2>
+            </div>
+            
             <!-- Swiper Slider Container -->
             <div class="swiper-container">
                 <div class="swiper-wrapper">
                     {% for course in courses %}
-                    <div class="swiper-slide">
-                        <div
-                            class="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition duration-300">
-                            <img src="{{ course.thumbnail }}" alt="{{ course.title }}" class="w-full h-48 object-cover">
-                            <div class="p-4">
-                                <h3 class="text-xl font-semibold text-[#3B3F58] mb-2">{{ course.title }}</h3>
-                                <p class="text-gray-600 mb-2">Rating: ⭐ {{ course.rating }}</p>
-                                <p class="text-gray-600 mb-2">Price: {{ course.price }}</p>
-                                <a href="{% url 'course_detail' course.id %}"
-                                    class="text-[#3B82F6] hover:text-[#2563EB] transition duration-200">View Course</a>
-                            </div>
-                        </div>
+                    <div class="swiper-slide p-1">
+                        {% include 'pages/Course_Card.html' %}
                     </div>
                     {% endfor %}
                 </div>
@@ -81,80 +41,55 @@
                 <div class="swiper-button-prev"></div>
             </div>
         </div>
+        
         {% if user.is_authenticated and recommended_courses %}
         <section class="mt-12">
-            <h2 class="text-2xl font-bold text-[#3B3F58] mb-4">Recommended for You</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {% for course in recommended_courses %}
-                <div class="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition duration-300">
-                    <img src="{{ course.thumbnail }}" alt="{{ course.title }}" class="w-full h-48 object-cover">
-                    <div class="p-4">
-                        <h3 class="text-xl font-semibold text-[#3B3F58] mb-2">{{ course.title }}</h3>
-                        <p class="text-gray-600 mb-2">Rating: ⭐ {{ course.rating }}</p>
-                        <p class="text-gray-600 mb-2">Price: {{ course.price }}</p>
-                        <a href="{% url 'course_detail' course.id %}" class="text-[#3B82F6] hover:text-[#2563EB] transition duration-200">View Course</a>
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-xl font-bold text-[#3B3F58] mb-4">Recommended for You</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                    {% for course in recommended_courses %}
+                    <div class="swiper-slide p-1">
+                        {% include 'pages/Course_Card.html' %}
                     </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
             </div>
         </section>
         {% endif %}
 
-<!-- Trending Searches Section -->
-<section class="mt-12">
-    <h2 class="text-2xl font-bold text-[#3B3F58] mb-4">
-        Trending Searches 
-        <span class="text-gray-500 text-lg">
-            (
-            {% for trend in trending_data %}
-                <a href="{% url 'search' %}?q={{ trend.keyword }}" class="hover:text-[#2563EB] transition duration-200">
-                    {{ trend.keyword }}
-                </a>
-                {% if not forloop.last %}, {% endif %}
-            {% endfor %}
-            )
-        </span>
-    </h2>
-    <div class="bg-white p-4 rounded-lg shadow-lg">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {% for trend in trending_data %}
-                {% for course in trend.courses %}
-                <div class="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition duration-300">
-                    <img src="{{ course.thumbnail }}" alt="{{ course.title }}" class="w-full h-48 object-cover">
-                    <div class="p-4">
-                        <h4 class="text-lg font-semibold text-[#3B3F58] mb-2">
-                            <a href="{% url 'search' %}?q={{ trend.keyword }}"
-                                class="text-[#3B82F6] hover:text-[#2563EB] transition duration-200">
-                                {{ course.title }}
+        <!-- Trending Searches Section -->
+        <section class="mt-12 mb-10">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-wrap items-center mb-4">
+                    <h2 class="text-xl font-bold text-[#3B3F58] mr-2">Trending Searches</h2>
+                    <div class="flex flex-wrap gap-1 mt-1 sm:mt-0">
+                        {% for trend in trending_data %}
+                            <a href="{% url 'search' %}?q={{ trend.keyword }}" 
+                               class="px-2 py-0.5 bg-white text-[#3B3F58] text-xs rounded-full border border-gray-200 hover:bg-[#3B3F58] hover:text-white transition-colors duration-200">
+                                {{ trend.keyword }}
                             </a>
-                        </h4>
-                        <p class="text-gray-600 mb-2">Rating: ⭐ {{ course.rating }}</p>
-                        <p class="text-gray-600 mb-2">Price: {{ course.price }}</p>
-                        <a href="{% url 'course_detail' course.id %}"
-                            class="text-[#3B82F6] hover:text-[#2563EB] transition duration-200">View Course</a>
+                        {% endfor %}
                     </div>
                 </div>
-                {% endfor %}
-            {% endfor %}
-        </div>
-    </div>
-</section>
-
-
-
-
+                
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                    {% for trend in trending_data %}
+                        {% for course in trend.courses %}
+                        <div class="swiper-slide p-1">
+                        {% include 'pages/Course_Card.html' %}
+                    </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-100 py-4 text-center">
-        <p class="text-gray-600">© 2025 MySite. All rights reserved.</p>
-    </footer>
-
-    <!-- Swiper JS Initialization -->
+   {% include 'pages/Footer.html' %}
     <script>
         const swiper = new Swiper('.swiper-container', {
-            slidesPerView: 1,
-            spaceBetween: 20,
+            slidesPerView: 2,
+            spaceBetween: 12,
             loop: true,
             navigation: {
                 nextEl: '.swiper-button-next',
@@ -162,10 +97,16 @@
             },
             breakpoints: {
                 640: {
-                    slidesPerView: 2,
+                    slidesPerView: 3,
+                    spaceBetween: 16,
                 },
                 1024: {
-                    slidesPerView: 3,
+                    slidesPerView: 4,
+                    spaceBetween: 16,
+                },
+                1280: {
+                    slidesPerView: 5,
+                    spaceBetween: 16,
                 }
             }
         });
