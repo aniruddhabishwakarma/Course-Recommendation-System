@@ -36,7 +36,7 @@
     {% include 'pages/Navbar.html' %}
 
     <!-- Login Form Container -->
-    <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
+    <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-lg mt-[60px]">
         <!-- Heading with Dark Slate Blue -->
         <h2 class="text-3xl font-bold text-center text-[#3B3F58] mb-6">Login</h2>
 
@@ -92,7 +92,7 @@
     </div>
 
    <!-- Register Modal -->
-<div id="registerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+<div id="registerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 ">
     <div class="bg-white w-full max-w-md p-8 rounded-lg shadow-2xl">
         <h2 class="text-3xl font-bold text-center mb-6 text-[#3B3F58]">Register</h2>
         <form method="post" action="{% url 'register' %}">
