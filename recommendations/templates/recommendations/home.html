@@ -17,7 +17,7 @@
 
 <body class="min-h-screen flex flex-col">
 
-   {% include 'pages/Navbar.html' %}
+    {% include 'pages/Navbar.html' %}
 
     <!-- Main Content -->
     <main class="flex-grow pt-16 px-10 mt-10">
@@ -25,7 +25,7 @@
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-2xl font-bold text-[#3B3F58] mt-1">Featured Courses</h2>
             </div>
-            
+
             <!-- Swiper Slider Container -->
             <div class="swiper-container">
                 <div class="swiper-wrapper">
@@ -41,7 +41,7 @@
                 <div class="swiper-button-prev"></div>
             </div>
         </div>
-        
+
         {% if user.is_authenticated and recommended_courses %}
         <section class="mt-12">
             <div class="max-w-7xl mx-auto">
@@ -64,28 +64,28 @@
                     <h2 class="text-xl font-bold text-[#3B3F58] mr-2">Trending Searches</h2>
                     <div class="flex flex-wrap gap-1 mt-1 sm:mt-0">
                         {% for trend in trending_data %}
-                            <a href="{% url 'search' %}?q={{ trend.keyword }}" 
-                               class="px-2 py-0.5 bg-white text-[#3B3F58] text-xs rounded-full border border-gray-200 hover:bg-[#3B3F58] hover:text-white transition-colors duration-200">
-                                {{ trend.keyword }}
-                            </a>
+                        <a href="{% url 'search' %}?q={{ trend.keyword }}"
+                            class="px-2 py-0.5 bg-white text-[#3B3F58] text-xs rounded-full border border-gray-200 hover:bg-[#3B3F58] hover:text-white transition-colors duration-200">
+                            {{ trend.keyword }}
+                        </a>
                         {% endfor %}
                     </div>
                 </div>
-                
+
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                     {% for trend in trending_data %}
-                        {% for course in trend.courses %}
-                        <div class="swiper-slide p-1">
+                    {% for course in trend.courses %}
+                    <div class="swiper-slide p-1">
                         {% include 'pages/Course_Card.html' %}
                     </div>
-                        {% endfor %}
+                    {% endfor %}
                     {% endfor %}
                 </div>
             </div>
         </section>
     </main>
 
-   {% include 'pages/Footer.html' %}
+    {% include 'pages/Footer.html' %}
     <script>
         const swiper = new Swiper('.swiper-container', {
             slidesPerView: 2,

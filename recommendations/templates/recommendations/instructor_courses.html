@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@
         }
     </style>
 </head>
+
 <body class="min-h-screen flex flex-col">
 
     {% include 'pages/Navbar.html' %}
@@ -19,8 +21,7 @@
     <!-- Main Content -->
     <main class="flex-grow pt-20 px-4">
         <div class="max-w-7xl mx-auto">
-            <h2 class="text-3xl font-bold text-[#3B3F58] mb-4">Courses by {{ instructor.name }}</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
                 {% for course in page_obj %}
                 {% include 'pages/Course_Card.html' %}
                 {% empty %}
@@ -31,14 +32,17 @@
             <!-- Pagination Controls -->
             <div class="mt-6 text-center">
                 {% if page_obj.has_previous %}
-                    <a href="?page={{ page_obj.previous_page_number }}" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Previous</a>
+                <a href="?page={{ page_obj.previous_page_number }}"
+                    class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Previous</a>
                 {% endif %}
                 {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Next</a>
+                <a href="?page={{ page_obj.next_page_number }}"
+                    class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Next</a>
                 {% endif %}
             </div>
         </div>
     </main>
     {% include 'pages/Footer.html' %}
 </body>
+
 </html>
